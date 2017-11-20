@@ -1,0 +1,68 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    @Scripts.Render("~/bundles/jquery")
+    <script type="text/javascript">
+        var ws;
+        $().ready(function () {
+            $("#btnConnect").click(function () {
+                $("#spanStatus").text("connecting");
+                //ws = new WebSocket("ws://localhost:8090/api/WSChat");
+                //ws = new WebSocket("ws://localhost:36453");
+                ws = new WebSocket("ws://ptgetter2.iptime.org:5000");
+                ws.onopen = function () {
+                    $("#spanStatus").text("connected");
+                };
+                ws.onmessage = function (evt) {
+                    $("#spanStatus").text(evt.data);
+
+                    // 서버에서 메시지가 오는 경우 Json으로 파싱
+                    // 파싱된 데이타 예제
+                    // {"lat":35.157278283939775,"lng":129.1420443131763,"level":3,"kind":"담배","place":"2층화장실","date":1511087430819}
+                    // lat:위도, lng:경도
+                    var smokeData = JSON.parse(evt.data);
+                    console.log(smokeData);
+
+                    // 파싱된 json data를 가지고 지도에 위치 출력
+
+                };
+                ws.onerror = function (evt) {
+                    $("#spanStatus").text(evt.message);
+                };
+                ws.onclose = function () {
+                    $("#spanStatus").text("disconnected");
+                };
+            });
+            $("#btnSend").click(function () {
+                if (ws.readyState == WebSocket.OPEN) {
+                    var msg = {
+                        type: "json",
+                        text: $("#textInput").val(),
+                        id: "ptgetter",
+                        date: Date.now()
+                    };
+                    ws.send(JSON.stringify(msg));
+                }
+                else {
+                    $("#spanStatus").text("Connection is closed");
+                }
+            });
+            $("#btnDisconnect").click(function () {
+                ws.close();
+            });
+        });
+    </script>
+</head>
+<body>
+    <input type="button" value="Connect" id="btnConnect" />
+    <input type="button" value="Disconnect" id="btnDisconnect" /><br />
+    <input type="text" id="textInput" />
+    <input type="button" value="Send" id="btnSend" /><br />
+    <span id="spanStatus">(display)</span>
+</body>
+</html>

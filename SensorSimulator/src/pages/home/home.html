@@ -1,0 +1,22 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>Hackathon - Fourtrix</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+
+    <h2 class="center">Sensor Simulator</h2>
+
+   <div class="center">
+        <p class="ionic-logo"></p>
+    </div>
+
+    <div>
+        <h3>Smoke Data: {{locationTracker.smokedata}}</h3>
+        <h3>Latitude: {{locationTracker.lat}}</h3>
+        <h3>Longitude: {{locationTracker.lng}}</h3>
+        <button ion-button full primary (click)="start()">Start Tracking</button>
+    </div>
+
+</ion-content>
